@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMasters</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="dashboard-body">
+    <!-- Header -->
+    <nav>
+        <ul>
+            <li class="logo-item"><img src="/css/images/logo-transparent-svg.svg" alt="Logo"></li>
+            <li class="nav-buttons"><a href="#" class="nav-link active" data-view="tasks">Tasks</a></li>
+            <li><a href="#" class="nav-link" data-view="dashboard">Dashboard</a></li>
+            <li><a href="#" class="nav-link" data-view="settings">Settings</a></li>
+            <li>
+                <button id="themeToggle" class="theme-toggle" title="Toggle theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard View -->
+        <div id="dashboardView" class="view">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3 class="stat-title">To Do</h3>
+                        <svg class="stat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-value" id="todoCount">0</div>
+                    <p class="stat-description">Tasks waiting to be started</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3 class="stat-title">In Progress</h3>
+                        <svg class="stat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-value" id="inProgressCount">0</div>
+                    <p class="stat-description">Tasks currently being worked on</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3 class="stat-title">Done</h3>
+                        <svg class="stat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-value" id="doneCount">0</div>
+                    <p class="stat-description">Tasks you have completed</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3 class="stat-title">Backlog</h3>
+                        <svg class="stat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                    </div>
+                    <div class="stat-value" id="backlogCount">0</div>
+                    <p class="stat-description">Tasks saved for later</p>
+                </div>
+            </div>
+
+            <!-- Chart Card -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h2 class="chart-title">Task Distribution</h2>
+                    <p class="chart-description">A breakdown of your tasks by their current status.</p>
+                </div>
+                <div class="chart-content">
+                    <canvas id="taskChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks View -->
+        <div id="tasksView" class="view active">
+            <header class="tasks-header">
+                <div class="tasks-header-content">
+                    <div>
+                        <h1 class="tasks-title">My Tasks</h1>
+                        <p class="tasks-subtitle">Organize and manage your work efficiently.</p>
+                    </div>
+                    <button class="btn-create-task" id="createTaskBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Create Task
+                    </button>
+                </div>
+            </header>
+
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab active" data-filter="all">All</button>
+                    <button class="tab" data-filter="todo">To Do</button>
+                    <button class="tab" data-filter="in-progress">In Progress</button>
+                    <button class="tab" data-filter="done">Done</button>
+                    <button class="tab" data-filter="backlog">Backlog</button>
+                </div>
+            </div>
+
+            <!-- Tasks Grid -->
+            <div class="tasks-grid" id="tasksGrid">
+                <!-- Tasks will be rendered here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <p class="empty-title">No tasks found.</p>
+                <p class="empty-subtitle">Try creating a new task or changing the filter.</p>
+            </div>
+        </div>
+
+        <!-- Settings View -->
+        <div id="settingsView" class="view">
+            <h1 class="settings-title">Settings</h1>
+            <div class="settings-card">
+                <div class="settings-header">
+                    <h2 class="settings-card-title">Profile</h2>
+                    <p class="settings-description">Manage your account settings and preferences.</p>
+                </div>
+                <div class="settings-content">
+                    <div class="user-info">
+                        <p><strong>Username:</strong> <span id="settingsUsername"></span></p>
+                        <p><strong>Email:</strong> <span id="settingsEmail"></span></p>
+                    </div>
+                    <div class="settings-actions">
+                        <button class="btn-logout" id="logoutBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create Task Modal -->
+    <div id="createTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Task</h2>
+                <button class="modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            <form id="createTaskForm">
+                <div class="form-group">
+                    <label for="taskTitle">Task Title</label>
+                    <input type="text" id="taskTitle" name="title" placeholder="Enter task title" required>
+                </div>
+                <div class="form-group">
+                    <label for="taskDescription">Description</label>
+                    <textarea id="taskDescription" name="description" rows="3" placeholder="Enter task description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="taskStatus">Status</label>
+                    <select id="taskStatus" name="status">
+                        <option value="todo" selected>To Do</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="done">Done</option>
+                        <option value="backlog">Backlog</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="taskDueDate">Due Date (Optional)</label>
+                    <input type="date" id="taskDueDate" name="dueDate">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancelModalBtn">Cancel</button>
+                    <button type="submit" class="btn-primary">Create Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/tasks.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

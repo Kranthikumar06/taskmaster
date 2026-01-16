@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/form.css">
+</head>
+<body>
+    <div class="form-container">
+        <form id="verifyForm" style="background: none; box-shadow: none; border: none; padding: 0; width: auto;">
+            <div style="text-align:center; margin-bottom: 12px;">
+                <label for="code" style="font-weight:600; color:#fff; font-size:16px;">Enter Verification Code</label>
+            </div>
+            <div id="codeInputs" style="display: flex; gap: 8px; justify-content: center; margin-bottom: 18px;">
+                <input type="text" maxlength="1" class="code-digit" id="code-1" autocomplete="off" inputmode="numeric" pattern="[0-9]" />
+                <input type="text" maxlength="1" class="code-digit" id="code-2" autocomplete="off" inputmode="numeric" pattern="[0-9]" />
+                <input type="text" maxlength="1" class="code-digit" id="code-3" autocomplete="off" inputmode="numeric" pattern="[0-9]" />
+                <input type="text" maxlength="1" class="code-digit" id="code-4" autocomplete="off" inputmode="numeric" pattern="[0-9]" />
+                <input type="text" maxlength="1" class="code-digit" id="code-5" autocomplete="off" inputmode="numeric" pattern="[0-9]" />
+                <input type="text" maxlength="1" class="code-digit" id="code-6" autocomplete="off" inputmode="numeric" pattern="[0-9]" />
+            </div>
+            <button class="button-submit" type="submit" style="width:100%;">Verify</button>
+            <div id="error-message" class="error-message"></div>
+        </form>
+    </div>
+    <script src="/js/config.js"></script>
+    <script src="/js/verify.js"></script>
+</body>
+</html>

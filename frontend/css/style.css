@@ -1,0 +1,184 @@
+/* Spinner animation for reset button */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid #fff;
+  border-top: 3px solid #ff6b6b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Make reset button show pointer/hand cursor */
+#send-reset-btn {
+  cursor: pointer !important;
+}
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+:root {
+  /* Dark Theme (Default) */
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #0a0a0a;
+  --text-primary: rgba(255, 255, 255, 0.9);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --nav-bg: rgba(255, 255, 255, 0.03);
+  --nav-border: rgba(255, 255, 255, 0.1);
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] {
+  /* Light Theme */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-tertiary: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --nav-border: rgba(148, 163, 184, 0.2);
+  --card-bg: #ffffff;
+  --card-border: rgba(203, 213, 225, 0.5);
+  --input-bg: #ffffff;
+  --input-border: rgba(203, 213, 225, 0.8);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+  font-family: 'Open Sans', sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: background 0.3s ease;
+}
+
+/* Hide scrollbar for all browsers */
+body::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  padding-top: 100px;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+nav {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 0;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 100%;
+}
+
+nav ul {
+  text-align: center;
+  background: transparent;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 1px var(--nav-border);
+  border: 1px solid var(--nav-border);
+  border-radius: 50px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin: 0 30px;
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 85%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 85%, rgba(0, 0, 0, 0) 100%);
+  transition: all 0.3s ease;
+}
+
+nav ul li.theme-toggle-item {
+  margin-left: auto;
+  margin-right: 240px;
+}
+
+nav ul li {
+  display: inline-block;
+}
+
+nav ul li.logo-item {
+  padding: 10px 15px;
+  margin-left: 35px;
+  margin-right: 200px;
+}
+
+nav ul li.logo-item img {
+  height: 40px;
+  width: auto;
+  vertical-align: middle;
+  filter: none;
+}
+
+[data-theme="light"] nav ul li.logo-item img {
+  filter: invert(1);
+}
+
+nav ul li a {
+  padding: 12px 25px;
+  font-family: 'Open Sans', sans-serif;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  font-weight: 500;
+  margin-right: 39px;
+  white-space: nowrap;
+}
+
+nav ul li a:hover {
+  background: var(--input-bg);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: var(--text-primary);
+  border-radius: 50px;
+}
+
+.theme-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  margin-left: -20px;
+  opacity: 1;
+}
+
+.theme-toggle:hover {
+  background: var(--input-bg);
+  color: var(--text-primary);
+}
+
+.theme-toggle svg {
+  stroke: currentColor;
+  opacity: 1;
+}
