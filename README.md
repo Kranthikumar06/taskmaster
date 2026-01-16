@@ -1,169 +1,222 @@
-# Ardentixx - Task Management App
+# Task Masters
 
-A full-stack task management application with user authentication, email verification, and Google OAuth integration.
+A full-stack web application for task management with secure user authentication, email verification, and OAuth integration.
 
-## Features
+## 🎯 Features
 
-- User registration with email verification
-- Login/logout functionality
-- Password reset via email
-- Google OAuth authentication
-- Task CRUD operations
-- Responsive dashboard
-- Dark/Light theme toggle
+- **User Authentication**
+  - Registration with email verification (6-digit OTP)
+  - Secure login with JWT tokens
+  - Password reset via email
+  - Google OAuth 2.0 integration
 
-## Tech Stack
+- **Task Management**
+  - Create, read, update, and delete tasks
+  - Mark tasks as complete/incomplete
+  - Real-time task status updates
+  - User-specific task isolation
 
-**Backend:**
-- Node.js & Express
-- MongoDB with Mongoose
-- JWT authentication
-- Nodemailer for emails
-- Passport.js for Google OAuth
-- bcryptjs for password hashing
+- **User Interface**
+  - Responsive design for all devices
+  - Dark/Light theme toggle
+  - Intuitive dashboard
+  - Real-time feedback and notifications
 
-**Frontend:**
-- Vanilla JavaScript
-- HTML5 & CSS3
+## 🛠️ Tech Stack
+
+### Backend
+- **Node.js** & **Express.js** - Server framework
+- **MongoDB** with **Mongoose** - Database and ODM
+- **JWT** - Secure authentication tokens
+- **Bcrypt** - Password hashing
+- **Passport.js** - Google OAuth integration
+- **Brevo API** - Transactional email service
+
+### Frontend
+- **HTML5**, **CSS3**, **JavaScript** (Vanilla)
 - Responsive design
+- REST API integration
 
-## Local Development
+## 📋 Prerequisites
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+- Node.js (v18 or higher)
+- MongoDB Atlas account
+- Brevo account (for email service)
+- Google Cloud Console project (for OAuth)
 
-3. Create `.env` file in the root directory (use `.env.example` as template):
-   ```env
-   PORT=5000
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
-   EMAIL_USER=your_email@gmail.com
-   EMAIL_PASS=your_app_password
-   SESSION_SECRET=your_session_secret
-   GOOGLE_CLIENT_ID=your_google_client_id
-   GOOGLE_CLIENT_SECRET=your_google_client_secret
-   GOOGLE_CALLBACK_URL=http://localhost:5000/auth/google/callback
-   ```
+## ⚙️ Installation & Setup
 
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Kranthikumar06/taskmaster.git
+cd taskmaster
+```
 
-5. Open http://localhost:5000 in your browser
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-## Deployment to Render
+### 3. Environment Configuration
 
-### Prerequisites
-- MongoDB Atlas account (free tier available)
-- Gmail account with App Password enabled
-- Google OAuth credentials (optional)
+Create a `.env` file in the root directory:
 
-### Steps
+```env
+# Database
+MONGO_URI=your_mongodb_connection_string
 
-1. **Create MongoDB Atlas Database:**
-   - Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-   - Create a free cluster
-   - Get your connection string
+# Server
+PORT=5000
 
-2. **Setup Gmail App Password:**
-   - Enable 2-factor authentication on your Gmail
-   - Go to Google Account → Security → App Passwords
-   - Generate an app password for "Mail"
+# Authentication
+JWT_SECRET=your_jwt_secret_key
+SESSION_SECRET=your_session_secret_key
 
-3. **Deploy to Render:**
-   - Push your code to GitHub
-   - Go to [Render Dashboard](https://dashboard.render.com/)
-   - Click "New +" → "Web Service"
-   - Connect your GitHub repository
-   - Configure:
-     - **Name:** ardentixx (or your preferred name)
-     - **Environment:** Node
-     - **Build Command:** `npm install`
-     - **Start Command:** `npm start`
-   
-4. **Add Environment Variables in Render:**
-   Go to Environment section and add:
-   ```
-   NODE_ENV=production
-   MONGO_URI=your_mongodb_atlas_connection_string
-   JWT_SECRET=your_random_secret_key
-   EMAIL_USER=your_email@gmail.com
-   EMAIL_PASS=your_gmail_app_password
-   SESSION_SECRET=your_random_session_secret
-   GOOGLE_CLIENT_ID=your_google_client_id (optional)
-   GOOGLE_CLIENT_SECRET=your_google_client_secret (optional)
-   GOOGLE_CALLBACK_URL=https://your-app.onrender.com/auth/google/callback
-   ```
+# Email Service (Brevo)
+EMAIL_USER=your_verified_email@gmail.com
+BREVO_API_KEY=your_brevo_api_key
 
-5. **Deploy:**
-   - Click "Create Web Service"
-   - Wait for deployment to complete
-   - Your app will be live at `https://your-app.onrender.com`
+# Google OAuth (Optional)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:5000/auth/google/callback
+```
 
-### Important Notes
+### 4. Run the Application
 
-- **Free Tier Limitations:** Render's free tier spins down after inactivity. First request may take 50+ seconds to wake up.
-- **MongoDB Connection:** Use MongoDB Atlas connection string with proper credentials
-- **Email Sending:** Gmail App Password is required for nodemailer to work
-- **Google OAuth:** Update callback URL to your Render domain
+**Development Mode:**
+```bash
+npm run dev
+```
 
-## Environment Variables Explained
+**Production Mode:**
+```bash
+npm start
+```
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| PORT | Server port | 5000 |
-| MONGO_URI | MongoDB connection string | mongodb+srv://user:pass@cluster.mongodb.net/db |
-| JWT_SECRET | Secret for JWT tokens | random_string_32_chars |
-| EMAIL_USER | Gmail address for sending emails | yourapp@gmail.com |
-| EMAIL_PASS | Gmail app-specific password | abcd efgh ijkl mnop |
-| SESSION_SECRET | Secret for sessions | random_string_32_chars |
-| GOOGLE_CLIENT_ID | Google OAuth client ID | xxx.apps.googleusercontent.com |
-| GOOGLE_CLIENT_SECRET | Google OAuth secret | GOCSPX-xxx |
-| GOOGLE_CALLBACK_URL | OAuth callback URL | https://yourapp.com/auth/google/callback |
+Access the application at `http://localhost:5000`
 
-## Project Structure
+## 🔄 Application Flow
+
+### 1. User Registration
+- User fills registration form (username, email, password)
+- Server validates input and checks for existing users
+- 6-digit verification code is generated and sent via email
+- User account is created with `isVerified: false` status
+- User is redirected to verification page
+
+### 2. Email Verification
+- User enters 6-digit code received via email
+- Server validates the code against database
+- Upon successful verification, `isVerified` is set to `true`
+- User can now log in
+
+### 3. User Login
+- User provides email/username and password
+- Server validates credentials and checks verification status
+- JWT token (5 min) and refresh token (7 days) are generated
+- Tokens are stored in localStorage
+- User is redirected to dashboard
+
+### 4. Task Operations
+- **Create**: User submits task title and description
+- **Read**: All user tasks are fetched and displayed
+- **Update**: User can edit task details or toggle completion status
+- **Delete**: User can remove tasks permanently
+
+### 5. Password Reset
+- User requests password reset via email
+- Server generates unique reset token (15-min expiry)
+- Reset link is sent to user's email
+- User clicks link, enters new password
+- Password is hashed and updated in database
+
+### 6. Google OAuth Flow
+- User clicks "Sign in with Google"
+- Redirected to Google authentication
+- Upon success, server checks if user exists
+- If new, auto-creates account with verified status
+- JWT token is generated and user is logged in
+
+## 📁 Project Structure
 
 ```
-ardentixx/
+taskmaster/
 ├── backend/
-│   ├── config/          # Database and email configuration
-│   ├── controllers/     # Route controllers
-│   ├── middleware/      # Auth middleware
-│   ├── models/          # Mongoose models
-│   ├── routes/          # API routes
-│   └── server.js        # Express app entry point
+│   ├── config/
+│   │   ├── db.js              # MongoDB connection
+│   │   └── mailer.js          # Brevo email configuration
+│   ├── controllers/
+│   │   ├── authController.js  # Authentication logic
+│   │   └── taskController.js  # Task CRUD operations
+│   ├── middleware/
+│   │   └── authMiddleware.js  # JWT verification
+│   ├── models/
+│   │   ├── User.js            # User schema
+│   │   └── Task.js            # Task schema
+│   ├── routes/
+│   │   ├── auth.js            # Auth endpoints
+│   │   └── tasks.js           # Task endpoints
+│   └── server.js              # Express server
 ├── frontend/
-│   ├── pages/           # HTML pages
-│   ├── js/              # JavaScript files
-│   ├── css/             # Stylesheets
-│   └── assets/          # Images and static files
-├── .env.example         # Environment variables template
-├── .gitignore          # Git ignore file
-├── package.json        # Dependencies
-└── README.md           # This file
+│   ├── pages/                 # HTML pages
+│   ├── js/                    # JavaScript modules
+│   ├── css/                   # Stylesheets
+│   └── assets/                # Images and icons
+├── package.json
+└── README.md
 ```
 
-## API Endpoints
+## 🔌 API Endpoints
 
 ### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `POST /api/auth/verify` - Verify email
-- `POST /api/auth/request-password-reset` - Request password reset
-- `POST /api/auth/reset-password` - Reset password
-- `GET /auth/google` - Google OAuth login
-- `GET /auth/google/callback` - Google OAuth callback
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/verify` | Verify email with OTP |
+| POST | `/api/auth/login` | User login |
+| POST | `/api/auth/refresh` | Refresh JWT token |
+| POST | `/api/auth/forgot-password` | Request password reset |
+| POST | `/api/auth/reset-password` | Reset password |
+| GET | `/auth/google` | Initiate Google OAuth |
+| GET | `/auth/google/callback` | Google OAuth callback |
 
-### Tasks
-- `GET /api/tasks` - Get all user tasks
-- `POST /api/tasks` - Create new task
-- `PUT /api/tasks/:id` - Update task
-- `DELETE /api/tasks/:id` - Delete task
+### Tasks (Protected Routes)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/tasks` | Get all user tasks |
+| POST | `/api/tasks` | Create new task |
+| PUT | `/api/tasks/:id` | Update task |
+| DELETE | `/api/tasks/:id` | Delete task |
 
-## License
+## 🚀 Deployment
+
+### Render Deployment
+
+1. Push code to GitHub
+2. Create new Web Service on Render
+3. Connect GitHub repository
+4. Configure environment variables
+5. Deploy
+
+**Build Command:** `npm install`  
+**Start Command:** `npm start`
+
+## 🔒 Security Features
+
+- Passwords hashed with bcrypt (10 salt rounds)
+- JWT-based authentication with short expiry
+- HTTP-only cookies for token storage
+- Input validation and sanitization
+- MongoDB injection prevention
+- CORS configured
+- Secure password reset with time-limited tokens
+
+## 👨‍💻 Author
+
+**Kranthi Kumar**  
+[GitHub](https://github.com/Kranthikumar06) | [Repository](https://github.com/Kranthikumar06/taskmaster)
+
+## 📄 License
 
 ISC
