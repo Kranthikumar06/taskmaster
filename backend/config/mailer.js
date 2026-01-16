@@ -1,18 +1,14 @@
 const nodemailer = require('nodemailer');
 
+// Use Brevo (300 emails/day free)
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp-relay.brevo.com',
+  port: 587,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.BREVO_SMTP_USER,
+    pass: process.env.BREVO_SMTP_KEY,
   },
-  pool: true,
-  maxConnections: 1,
-  rateDelta: 20000,
-  rateLimit: 5,
-  connectionTimeout: 60000,
-  greetingTimeout: 30000,
-  socketTimeout: 60000,
 });
 
 // Verify connection
