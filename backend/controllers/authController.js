@@ -143,20 +143,28 @@ exports.register = async (req, res) => {
       isVerified: false,
     });
 
-    // Send verification email
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'Verify your email',
-      html: `
-        <div style="font-family: 'Open Sans', Arial, sans-serif; background: #f9f9f9; padding: 32px; border-radius: 12px; max-width: 400px; margin: auto; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
-          <h2 style="color: #222; text-align: center; margin-bottom: 16px;">Welcome to Task Masters!</h2>
-          <p style="color: #444; text-align: center; font-size: 16px;">To complete your registration, please enter the verification code below:</p>
-          <div style="font-size: 28px; font-weight: bold; letter-spacing: 12px; color: #ff6b6b; background: #fff; padding: 16px 0; border-radius: 8px; text-align: center; margin: 18px 0; border: 1px solid #eee;">${verificationCode}</div>
-          <p style="color: #666; text-align: center; font-size: 14px; margin-top: 12px;">If you did not request this, you can safely ignore this email.<br>Thank you for joining us!</p>
-        </div>
-      `,
-    });
+    // Send verification email with timeout
+    try {
+      await Promise.race([
+        transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: 'Verify your email',
+          html: `
+            <div style="font-family: 'Open Sans', Arial, sans-serif; background: #f9f9f9; padding: 32px; border-radius: 12px; max-width: 400px; margin: auto; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+              <h2 style="color: #222; text-align: center; margin-bottom: 16px;">Welcome to Task Masters!</h2>
+              <p style="color: #444; text-align: center; font-size: 16px;">To complete your registration, please enter the verification code below:</p>
+              <div style="font-size: 28px; font-weight: bold; letter-spacing: 12px; color: #ff6b6b; background: #fff; padding: 16px 0; border-radius: 8px; text-align: center; margin: 18px 0; border: 1px solid #eee;">${verificationCode}</div>
+              <p style="color: #666; text-align: center; font-size: 14px; margin-top: 12px;">If you did not request this, you can safely ignore this email.<br>Thank you for joining us!</p>
+            </div>
+          `,
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Email timeout')), 30000))
+      ]);
+    } catch (emailError) {
+      console.error('Email sending error:', emailError);
+      // Don't fail registration if email fails, user is already created
+    }
 
     if (user) {
       res.status(201).json({
