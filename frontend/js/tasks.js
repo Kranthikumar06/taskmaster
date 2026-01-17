@@ -1,15 +1,59 @@
+// Helper function to make API calls with automatic token refresh
+async function apiCallWithRefresh(url, options = {}) {
+  let token = localStorage.getItem('token');
+  
+  // Add authorization header if not present
+  if (!options.headers) {
+    options.headers = {};
+  }
+  options.headers['Authorization'] = `Bearer ${token}`;
+  
+  try {
+    let response = await fetch(url, options);
+    
+    // If token expired, try to refresh and retry the request
+    if (response.status === 401) {
+      const data = await response.json();
+      if (data.code === 'TOKEN_EXPIRED') {
+        // Try to refresh token
+        const refreshed = await window.refreshAccessToken();
+        if (refreshed) {
+          // Retry the original request with new token
+          token = localStorage.getItem('token');
+          options.headers['Authorization'] = `Bearer ${token}`;
+          response = await fetch(url, options);
+        } else {
+          // Refresh failed, logout
+          window.location.href = '/login';
+          return null;
+        }
+      }
+    }
+    
+    return response;
+  } catch (error) {
+    console.error('API call error:', error);
+    return null;
+  }
+}
+
+// Make apiCallWithRefresh globally accessible
+window.apiCallWithRefresh = apiCallWithRefresh;
+
 // Make editTask globally accessible for inline onclick handlers
 window.editTask = editTask;
 // Load tasks from backend for logged-in user
 async function loadTasksFromBackend() {
-  const token = localStorage.getItem('token');
   try {
-    const response = await fetch(`${API_BASE_URL}/api/tasks`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
+    const response = await apiCallWithRefresh(`${API_BASE_URL}/api/tasks`, {
+      method: 'GET'
     });
+    
+    if (!response) {
+      tasks = [];
+      return;
+    }
+    
     const data = await response.json();
     if (data.success) {
       tasks = data.data || [];
@@ -17,6 +61,7 @@ async function loadTasksFromBackend() {
       tasks = [];
     }
   } catch (err) {
+    console.error('Error loading tasks:', err);
     tasks = [];
   }
 }
@@ -281,15 +326,14 @@ function deleteTask(taskId) {
     e.preventDefault();
     const confirmText = document.getElementById('deleteConfirmInput').value.trim().toLowerCase();
     if (confirmText === 'delete') {
-      // Delete from backend
+      // Delete from backend with auto token refresh
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+        const response = await apiCallWithRefresh(`${API_BASE_URL}/api/tasks/${taskId}`, {
+          method: 'DELETE'
         });
+        
+        if (!response) return;
+        
         const data = await response.json();
         if (data.success) {
           await loadTasksFromBackend();
@@ -395,15 +439,16 @@ function editTask(taskId) {
       dueDate: document.getElementById('editTaskDueDate').value ? new Date(document.getElementById('editTaskDueDate').value).toISOString() : undefined
     };
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}` , {
+      const response = await apiCallWithRefresh(`${API_BASE_URL}/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(updatedTask)
       });
+      
+      if (!response) return;
+      
       const data = await response.json();
       if (data.success) {
         await loadTasksFromBackend();
@@ -499,17 +544,18 @@ if (createTaskForm) {
       dueDate: dueDate ? new Date(dueDate).toISOString() : undefined
     };
 
-    // Send to backend
+    // Send to backend with auto token refresh
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/api/tasks`, {
+      const response = await apiCallWithRefresh(`${API_BASE_URL}/api/tasks`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       });
+      
+      if (!response) return;
+      
       const data = await response.json();
       if (data.success) {
         // Ensure modal is hidden
@@ -533,4 +579,3 @@ if (createTaskForm) {
     }
   });
 }
-

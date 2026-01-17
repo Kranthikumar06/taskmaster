@@ -93,6 +93,31 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = `${API_BASE_URL}/auth/google`;
     });
   });
+  
+  // Apple button handler - show "Coming Soon" tooltip
+  document.querySelectorAll('.btn.apple').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      // Check if tooltip already exists
+      let tooltip = btn.querySelector('.apple-tooltip');
+      if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.className = 'apple-tooltip';
+        tooltip.textContent = 'Coming Soon';
+        btn.appendChild(tooltip);
+      }
+      
+      // Show tooltip
+      tooltip.classList.add('show');
+      
+      // Hide after 2 seconds
+      setTimeout(() => {
+        tooltip.classList.remove('show');
+      }, 2000);
+    });
+  });
+  
   // Find all password input containers
   document.querySelectorAll('.inputForm').forEach(formGroup => {
     const passwordInput = formGroup.querySelector('input[type="password"]');
@@ -173,6 +198,10 @@ function handleSessionExpiry() {
   localStorage.removeItem('token');
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('user');
+  // Redirect to login page
+  if (!window.location.pathname.includes('login') && !window.location.pathname.includes('signup')) {
+    window.location.href = '/login';
+  }
   // Session expired due to inactivity. Please login again.
   window.location.href = '/login';
 }
@@ -226,6 +255,52 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   if (registerForm && window.location.pathname.includes('signup')) {
+    const usernameInput = document.getElementById('signupUsername');
+    const usernameError = document.getElementById('usernameError');
+    let usernameCheckTimeout;
+
+    // Real-time username validation
+    if (usernameInput && usernameError) {
+      usernameInput.addEventListener('input', () => {
+        const username = usernameInput.value.trim();
+        
+        // Clear previous timeout
+        clearTimeout(usernameCheckTimeout);
+        
+        // Hide error initially
+        usernameError.textContent = '';
+        usernameError.classList.remove('show');
+        usernameInput.classList.remove('error');
+        
+        if (username.length === 0) {
+          return;
+        }
+        
+        if (username.length < 3) {
+          usernameError.textContent = 'Username must be at least 3 characters';
+          usernameError.classList.add('show');
+          usernameInput.classList.add('error');
+          return;
+        }
+        
+        // Check if username is available after 500ms delay
+        usernameCheckTimeout = setTimeout(async () => {
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/auth/check-username?username=${encodeURIComponent(username)}`);
+            const data = await response.json();
+            
+            if (!data.available) {
+              usernameError.textContent = 'Username is already taken';
+              usernameError.classList.add('show');
+              usernameInput.classList.add('error');
+            }
+          } catch (error) {
+            console.error('Error checking username:', error);
+          }
+        }, 500);
+      });
+    }
+
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       

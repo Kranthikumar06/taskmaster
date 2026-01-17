@@ -302,3 +302,76 @@ exports.refreshToken = async (req, res) => {
     });
   }
 };
+// @desc    Update username
+// @route   PUT /api/auth/update-username
+// @access  Private
+exports.updateUsername = async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    if (!username || username.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Username is required',
+      });
+    }
+
+    // Check if username is already taken
+    const existingUser = await User.findOne({ username: username.toLowerCase().trim() });
+    if (existingUser && existingUser._id.toString() !== req.user._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Username is already taken',
+      });
+    }
+
+    // Update username
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { username: username.toLowerCase().trim() },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Username updated successfully',
+      data: {
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// @desc    Check if username is available
+// @route   GET /api/auth/check-username
+// @access  Public
+exports.checkUsername = async (req, res) => {
+  try {
+    const { username } = req.query;
+
+    if (!username || username.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Username is required',
+      });
+    }
+
+    const existingUser = await User.findOne({ username: username.toLowerCase().trim() });
+
+    res.status(200).json({
+      success: true,
+      available: !existingUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

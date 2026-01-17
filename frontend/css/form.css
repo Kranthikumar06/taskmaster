@@ -208,6 +208,24 @@ input:-webkit-autofill:active {
   animation: slideDown 0.3s ease;
 }
 
+/* Field-specific error message */
+.field-error-msg {
+  display: none;
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+}
+
+.field-error-msg.show {
+  display: block;
+}
+
+.input.error {
+  border-color: #ff6b6b !important;
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -274,4 +292,38 @@ input:-webkit-autofill:active {
   background: var(--input-bg);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
+}
+
+/* Apple button tooltip */
+.apple-tooltip {
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.apple-tooltip.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.apple-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.9);
 }
