@@ -42,10 +42,15 @@ const params = getQueryParams();
 if (params.name && params.email) {
   user = { name: params.name, email: params.email };
   localStorage.setItem('user', JSON.stringify(user));
-  // Store JWT token if present
+  // Store JWT token if present (from Google OAuth)
   if (params.token) {
     localStorage.setItem('token', params.token);
   }
+  if (params.refreshToken) {
+    localStorage.setItem('refreshToken', params.refreshToken);
+  }
+  // Clean URL without reloading
+  window.history.replaceState({}, document.title, window.location.pathname);
 }
 
 function isValidJWT(token) {

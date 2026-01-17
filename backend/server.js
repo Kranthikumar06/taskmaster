@@ -95,9 +95,11 @@ app.get('/auth/google/callback',
       });
       await user.save();
     }
-    // Generate JWT token and redirect to login (frontend will send to dashboard)
+    // Generate JWT tokens (both access and refresh)
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '5m' });
-    return res.redirect(`/login?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&token=${token}`);
+    const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    // Redirect directly to dashboard with tokens in URL (frontend will store them)
+    return res.redirect(`/dashboard?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&token=${token}&refreshToken=${refreshToken}`);
   }
 );
 

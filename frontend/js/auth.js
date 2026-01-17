@@ -55,6 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     if (params.name && params.email && params.token) {
       localStorage.setItem('token', params.token);
+      if (params.refreshToken) {
+        localStorage.setItem('refreshToken', params.refreshToken);
+      }
       try {
         // Fetch full user profile using token
         const res = await fetch('/api/auth/me', {
